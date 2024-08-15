@@ -1,0 +1,66 @@
+# checkpoint 1: https://rekor.sigstore.dev/api/v1/log?stable=true
+{
+    "inactiveShards": [
+        {
+            "rootHash": "4d006aa46efcb607dd51d900b1213754c50cc9251c3405c6c2561d9d6a2f3239",
+            "signedTreeHead": "rekor.sigstore.dev - 3904496407287907110\n4163431\nTQBqpG78tgfdUdkAsSE3VMUMySUcNAXGwlYdnWovMjk=\n\n— rekor.sigstore.dev wNI9ajBFAiBpdYhamRBgLC0h3dyEXSfZX0O6miGgEK+KeRHH5o0wJgIhANRGOOfCRC0h3F6TBWFbD26ph+EXS8A2pGAzHCYFjp7u\n",
+            "treeID": "3904496407287907110",
+            "treeSize": 4163431
+        }
+    ],
+    "rootHash": "d9231da5a2cf5b2d25d35bc2f988fa2b443e00177ab4e9c0be2925d57cdc6750",
+    "signedTreeHead": "rekor.sigstore.dev - 2605736670972794746\n117448251\n2SMdpaLPWy0l01vC+Yj6K0Q+ABd6tOnAvikl1XzcZ1A=\n\n— rekor.sigstore.dev wNI9ajBEAiBurVbCaJIXUpgkVLyd7taJ/mDkjkQ+hRWJDPgTpxGafgIgOve6ktpC6Vmlqk0w7ISS4tgJ8ZSjE7zmUD21Nft6nJw=\n",
+    "treeID": "2605736670972794746",
+    "treeSize": 117448251
+}
+
+# checkpoint 2: https://rekor.sigstore.dev/api/v1/log?stable=true
+{
+    "inactiveShards": [
+        {
+            "rootHash": "4d006aa46efcb607dd51d900b1213754c50cc9251c3405c6c2561d9d6a2f3239",
+            "signedTreeHead": "rekor.sigstore.dev - 3904496407287907110\n4163431\nTQBqpG78tgfdUdkAsSE3VMUMySUcNAXGwlYdnWovMjk=\n\n— rekor.sigstore.dev wNI9ajBFAiEA1XfluUY5vdYzkGaOZh/YGZu2umct4cfQMPKbEbXCZK4CIGyiHjWvMWcaWgkhfRIJUF0AHGRY/mKZODq2OCclO5L1\n",
+            "treeID": "3904496407287907110",
+            "treeSize": 4163431
+        }
+    ],
+    "rootHash": "e7f8e2435c7732c0ba133b99c58b3a6cfbf7d4090904579bd7e68fb90037268f",
+    "signedTreeHead": "rekor.sigstore.dev - 2605736670972794746\n117449239\n5/jiQ1x3MsC6EzuZxYs6bPv31AkJBFeb1+aPuQA3Jo8=\n\n— rekor.sigstore.dev wNI9ajBGAiEAqwCoIQabEBPY2d9L9h1VuqcORvNIRs5b0xWV/nDa5zoCIQCeQQu1N1p8KuJUdilNacuWw69ZUFYegbB3isp4g32stw==\n",
+    "treeID": "2605736670972794746",
+    "treeSize": 117449239
+}
+
+# params needed to verify consistency
+root1 = oldSTH.hash = "d9231da5a2cf5b2d25d35bc2f988fa2b443e00177ab4e9c0be2925d57cdc6750"
+root2 = newSTH.hash = "e7f8e2435c7732c0ba133b99c58b3a6cfbf7d4090904579bd7e68fb90037268f"
+
+size1 = firstSize = oldSTH.treeSize = 117448251
+size2 = lastSize = newSTH.treeSize = 117449239
+treeID = any signedTreeHead.id = 2605736670972794746 (will rarely change)
+
+## get proofs using the above 3 params: 
+{
+    "hashes": [
+        "e8a035910e1b40fe116dae9c3d356aa1bf69abb03bb8606482e97dc35478f02c",
+        "6680d66a2cf65e95202ca85b387adb69e7ac3106798896206d3fcafcf5c9bdbf",
+        "5ed052ed41d0a59fd0c2ff76a50f07aecbfff8400a83f7753d33177aededeeb7",
+        "e410d09512674b74b847efba26352c502db5db2053d07ca23762d54e3af83ea4",
+        "a722825578203cd5cf81ad154dd7749735699ffd140fef167149fec5c5f3ccf1",
+        "9a5ad1dda5819af34c3a07f9e1b88c9fe34ce07c8539188a5104d42908f35a66",
+        "fa247d5113a8d8b93315856fdc4d5de6ea697c87638b8e179eab85595865d253",
+        "eaaaaddd0eeba23fe4ff0266be4c1300d7d12f658315102a684db0229cf173c5",
+        "1b66d99eea91e857ffbf2501fcb3e867b74eec3e8882ee24849bb05270b83bea",
+        "2f43f035d5bca37fa622019efa47a049052f03998bf0604e9851d8e4a29dd3aa",
+        "7f15ea2040344dfe8829d3ca5cb9fa6e3e435368ba26e8646dd70e8249446c50",
+        "fd42a3dadb78d624c7240069414a5bc6dafa6c5b3a6dc900a4e05dd3b52bfdd3",
+        "056c1bf4105c941ee06b3388de09ff8164ff4791de2030164083d9641be18663",
+        "6ff4468f32bf363b46b82a19bc9a44c1fb140390f7125f71ca689268c73f5583",
+        "a443e2e620403b5c1f7c5dbb0c2af9563771b6caa2f4935fbfc43bc07e44873a",
+        "b4a3c418e763c85be8b195fcec5f5d4c95d94c06b3f6549ec93b1146b0f083f9",
+        "6ba90b9f03789cf95da96ab83a83ba333db9650c754da2cc17421b31231576e4",
+        "f7c7a7ccc682fb1e6808cbc8650039cfcbeed9aa4330216f13ff77e4d7ee3f0f"
+    ],
+    "rootHash": "0ea6b8650f2c45fb3c8731c855842891eda6b6d4bf1aad659e3cf8b9662b481a"
+}
+
+## the proof hashes are always the same, but the root hash keeps changing each api req you make. why?
