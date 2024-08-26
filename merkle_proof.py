@@ -40,21 +40,20 @@ def verify_consistency(hasher, size1, size2, proof, root1, root2):
     bytearray_proof = []
     for elem in proof:
         bytearray_proof.append(bytes.fromhex(elem))
-    proof = bytearray_proof
 
     if size2 < size1:
         raise ValueError(f"size2 ({size2}) < size1 ({size1})")
     if size1 == size2:
-        if proof:
-            raise ValueError("size1=size2, but proof is not empty")
+        if bytearray_proof:
+            raise ValueError("size1=size2, but bytearray_proof is not empty")
         verify_match(root1, root2)
         return
     if size1 == 0:
-        if proof:
-            raise ValueError(f"expected empty proof, but got {len(proof)} components")
+        if bytearray_proof:
+            raise ValueError(f"expected empty bytearray_proof, but got {len(bytearray_proof)} components")
         return
-    if not proof:
-        raise ValueError("empty proof")
+    if not bytearray_proof:
+        raise ValueError("empty bytearray_proof")
 
     inner, border = decomp_incl_proof(size1 - 1, size2)
     shift = (size1 & -size1).bit_length() - 1
@@ -63,20 +62,20 @@ def verify_consistency(hasher, size1, size2, proof, root1, root2):
     if size1 == 1 << shift:
         seed, start = root1, 0
     else:
-        seed, start = proof[0], 1
+        seed, start = bytearray_proof[0], 1
 
-    if len(proof) != start + inner + border:
-        raise ValueError(f"wrong proof size {len(proof)}, want {start + inner + border}")
+    if len(bytearray_proof) != start + inner + border:
+        raise ValueError(f"wrong bytearray_proof size {len(bytearray_proof)}, want {start + inner + border}")
 
-    proof = proof[start:]
+    bytearray_proof = bytearray_proof[start:]
 
     mask = (size1 - 1) >> shift
-    hash1 = chain_inner_right(hasher, seed, proof[:inner], mask)
-    hash1 = chain_border_right(hasher, hash1, proof[inner:])
+    hash1 = chain_inner_right(hasher, seed, bytearray_proof[:inner], mask)
+    hash1 = chain_border_right(hasher, hash1, bytearray_proof[inner:])
     verify_match(hash1, root1)
 
-    hash2 = chain_inner(hasher, seed, proof[:inner], mask)
-    hash2 = chain_border_right(hasher, hash2, proof[inner:])
+    hash2 = chain_inner(hasher, seed, bytearray_proof[:inner], mask)
+    hash2 = chain_border_right(hasher, hash2, bytearray_proof[inner:])
     verify_match(hash2, root2)
 
 def verify_match(calculated, expected):
@@ -117,3 +116,30 @@ class RootMismatchError(Exception):
 
     def __str__(self):
         return f"calculated root:\n{self.calculated_root}\n does not match expected root:\n{self.expected_root}"
+
+def root_from_inclusion_proof(hasher, index, size, leaf_hash, proof):
+    if index >= size:
+        raise ValueError(f"index is beyond size: {index} >= {size}")
+
+    if len(leaf_hash) != hasher.size():
+        raise ValueError(f"leaf_hash has unexpected size {len(leaf_hash)}, want {hasher.size()}")
+
+    inner, border = decomp_incl_proof(index, size)
+    if len(proof) != inner + border:
+        raise ValueError(f"wrong proof size {len(proof)}, want {inner + border}")
+
+    res = chain_inner(hasher, leaf_hash, proof[:inner], index)
+    res = chain_border_right(hasher, res, proof[inner:])
+    return res
+
+
+def verify_inclusion(hasher, index, size, leaf_hash, proof, root):
+    bytearray_proof = []
+    for elem in proof:
+        bytearray_proof.append(bytes.fromhex(elem))
+
+    bytearray_root = bytes.fromhex(root)
+    bytearray_leaf = bytes.fromhex(leaf_hash)
+    calc_root = root_from_inclusion_proof(hasher, index, size, bytearray_leaf, bytearray_proof)
+    verify_match(calc_root, bytearray_root)
+    print(calc_root.hex(), bytearray_root.hex()) 
