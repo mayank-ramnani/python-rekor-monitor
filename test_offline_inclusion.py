@@ -1,4 +1,4 @@
-from merkle_proof import DefaultHasher, verify_inclusion 
+from merkle_proof import DefaultHasher, verify_inclusion
 
 index = 2636516
 size = 2703163
@@ -7,7 +7,7 @@ size = 2668022
 leaf_hash = "c65d81e5005a5ad25557dc2da0c1f9d9451739514ba85172ff4cb32f1cb4318e"
 root = "c9d2d9de0f0284ad890ab1f50c50f83b9464a5323465c78a8d9b976b0f02116d"
 
-proof = [    
+proof = [
     "0edc420837cb1e9d3d02149900d8ec33d473389d220db87285e0779cb54631e4",
     "92b4b816918826a0b6c470d336af7e6f527ca933e6c89a638f90cbebe813f3d7",
     "aa7b17287494cdffec0fc6e02ae4f3340d1724c4545653791d376f0cb328a1c0",
