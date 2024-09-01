@@ -61,7 +61,7 @@ def get_verification_proof(log_index, debug=False):
     if debug:
         print(proof)
         print("writing to file")
-        with open("proof.json", 'w') as f:
+        with open("debug-proof.json", 'w') as f:
             f.write(json.dumps(proof, indent=4))
     return proof
 
@@ -79,7 +79,7 @@ def get_latest_checkpoint(debug=False):
         print("fetched checkpoint:")
         print(json.dumps(checkpoint, indent=4))
         print("writing to file")
-        with open("checkpoint.json", 'w') as f:
+        with open("debug-checkpoint.json", 'w') as f:
             f.write(json.dumps(checkpoint, indent=4))
     return checkpoint
 
@@ -167,11 +167,11 @@ def inclusion(log_index, artifact_filepath, debug=False):
         if debug:
             print("base64 signature", sig_b64)
             print("base64 cert", cert_b64)
-            with open("signing_cert.pem", "wb") as f:
+            with open("debug-signing_cert.pem", "wb") as f:
                 f.write(cert)
-            with open("artifact.sig", "wb") as f:
+            with open("debug-artifact.sig", "wb") as f:
                 f.write(sig)
-            with open("public_key.pem", "wb") as f:
+            with open("debug-public_key.pem", "wb") as f:
                 f.write(public_key)
 
             print(public_key.decode("utf8"))
