@@ -1,68 +1,43 @@
 import argparse
-from merkle_proof import DefaultHasher, verify_consistency, verify_inclusion
 import requests
 import time
 import base64
 import json
+from merkle_proof import DefaultHasher, verify_consistency, verify_inclusion
 from my_crypto import extract_public_key, verify_binary_signature
 
-def consistency():
+def consistency(prev_checkpoint, debug=False):
     try:
-        checkpoint1 = {}
-        checkpoint2 = {}
-        # NOTE: rekor-monitor uses stable=true and a 5 minute gap between checkpoints by default
-        # more info about stable flag: https://github.com/sigstore/rekor/issues/1566
-        resp = requests.get("https://rekor.sigstore.dev/api/v1/log?stable=false")
-        if resp.status_code != 200:
-            print("error getting checkpoint1")
-        else:
-            checkpoint1 = resp.json()
-            print("fetched checkpoint1:", checkpoint1)
+        current_checkpoint = get_latest_checkpoint()
 
-        # wait for data in the rekor log to update
-        # time.sleep(30)
-        resp = requests.get("https://rekor.sigstore.dev/api/v1/log?stable=false")
-        if resp.status_code != 200:
-            print("error getting checkpoint2")
-        else:
-            checkpoint2 = resp.json()
-            print("fetched checkpoint2:", checkpoint2)
-
-        size1 = checkpoint1["treeSize"]
-        size2 = checkpoint2["treeSize"]
+        size1 = prev_checkpoint["treeSize"]
+        size2 = current_checkpoint["treeSize"]
 
         if (size1 == size2):
             print("both checkpoints are the same")
-            # return
+            return
 
-        root1 = checkpoint1["rootHash"]
-        root2 = checkpoint2["rootHash"]
+        root1 = prev_checkpoint["rootHash"]
+        root2 = current_checkpoint["rootHash"]
 
-        if (checkpoint1["treeID"] == checkpoint2["treeID"]):
-            treeID = checkpoint1["treeID"]
+        if (prev_checkpoint["treeID"] == current_checkpoint["treeID"]):
+            treeID = prev_checkpoint["treeID"]
         else:
             print("bad tree id")
             return
 
-        # get proof
-        size1 = 2665690
-        size2 = 2665696
-        treeID = 1193050959916656506
-        root1 = "e66004eadd7085da9077cfe6a636223f03f8484c0fbdda5515dc34c93072f378"
-        root2 = "1d16c60946261d659c516af834a840b0f754fdd6319d6a193af4cdeec4c6eff7"
         resp = requests.get(f"https://rekor.sigstore.dev/api/v1/log/proof?firstSize={size1}&lastSize={size2}&treeID={treeID}")
         if resp.status_code != 200:
-            print("error getting proof", resp.url)
+            print("error getting consistency proof", resp.url)
             return
 
         proof = resp.json()["hashes"]
-        print("obtained proof", proof)
+        if debug:
+            print("obtained consistency proof", proof)
 
         # verify consistency of checkpoints
-        # verify_consistency(DefaultHasher, size1, size2, proof, root1, root2)
         verify_consistency(DefaultHasher, size1, size2, proof, root1, root2)
-        print("Consistency verification successful")
-        # verify_inclusion(DefaultHasher, index, size, leaf_hash, proof, root)
+        print("Consistency verification successful.")
 
     except Exception as e:
         print(f"Consistency verification failed: {str(e)}")
@@ -93,14 +68,16 @@ def get_verification_proof(log_index, debug=False):
 
 def get_latest_checkpoint(debug=False):
     checkpoint = {}
+    # NOTE: rekor-monitor uses stable=true and a 5 minute gap between checkpoints by default
+    # more info about stable flag: https://github.com/sigstore/rekor/issues/1566
     resp = requests.get("https://rekor.sigstore.dev/api/v1/log?stable=false")
     if resp.status_code != 200:
         print("error getting checkpoint")
     else:
         checkpoint = resp.json()
+    if debug:
         print("fetched checkpoint:")
         print(json.dumps(checkpoint, indent=4))
-    if debug:
         print("writing to file")
         with open("checkpoint.json", 'w') as f:
             f.write(json.dumps(checkpoint, indent=4))
@@ -124,9 +101,13 @@ def main():
                         signature',
                         required=False)
     parser.add_argument('--consistency', help='Verify consistency of a given\
-                        checkpoint with the latest checkpoint. Usage: \
-                        --consistency \'{"treeID": "abcd", "rootHash": "asdf",\
-                                        treeSize: "123123"}\'',
+                        checkpoint with the latest checkpoint.',
+                        action='store_true')
+    parser.add_argument('--tree-id', help='Tree ID for consistency proof',
+                        required=False)
+    parser.add_argument('--tree-size', help='Tree size for consistency proof',
+                        required=False, type=int)
+    parser.add_argument('--root-hash', help='Root hash for consistency proof',
                         required=False)
     args = parser.parse_args()
     if args.debug:
@@ -139,7 +120,22 @@ def main():
     if args.inclusion:
         inclusion(args.inclusion, args.artifact, debug)
     if args.consistency:
-        consistency()
+        if not args.tree_id:
+            print("please specify tree id for prev checkpoint")
+            return
+        if not args.tree_size:
+            print("please specify tree size for prev checkpoint")
+            return
+        if not args.root_hash:
+            print("please specify root hash for prev checkpoint")
+            return
+
+        prev_checkpoint = {}
+        prev_checkpoint["treeID"] = args.tree_id
+        prev_checkpoint["treeSize"] = args.tree_size
+        prev_checkpoint["rootHash"] = args.root_hash
+
+        consistency(prev_checkpoint, debug)
 
 def inclusion(log_index, artifact_filepath, debug=False):
     # sanity
@@ -181,9 +177,6 @@ def inclusion(log_index, artifact_filepath, debug=False):
             print(public_key.decode("utf8"))
         verify_binary_signature(sig, public_key, artifact_filepath)
 
-    # TODO: also need to call the merkle proof verify inclusion from here
-    # figure out what args you need and how to get them here and then call it
-    # take inspiration from inclusion.py
     try:
         proof = get_verification_proof(log_index, debug)
         verify_inclusion(DefaultHasher, proof["index"], proof["tree_size"],
