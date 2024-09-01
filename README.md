@@ -1,4 +1,15 @@
-## Goals
+## Usage
+- To fetch the latest checkpoint from the rekor server: `python main.py -c`
+ or `python main.py --checkpoint`
+- To verify that a particular log index is included in the transparency log as
+ of now and verify the signature on that artifact stored in the transparency
+ log: `python main.py --inclusion <logIndex> --artifact <artifactFilePath>`
+- To verify that an older checkpoint is consistent with the latest checkpoint
+ on the rekor server: `python main.py --consistency --tree-id <treeID>
+ --tree-size <treeSize> --root-hash <rootHash>`
+ Tree ID, tree size and root hash from the older checkpoint.
+
+## Flow
 1. Add an artifact to the Rekor transparency log using the cosign tool.
     Verify that the entry was successfully included in the transparency log.
 2. Verify the consistency of the rekor transparency log, i.e that the new
@@ -16,8 +27,7 @@
     "--inclusion <logIndex>"
     b. Verify that the artifact signature is correct (use `crypto` api)
 5. At any point in time, can verify that the consistency of the checkpoint which had our entry added and the latest checkpoint by verifying the consistency proof.
-    Just need the old checkpoint details.
-    `--consistency '{"treeID": "abcd", "rootHash": "asdf", treeSize: "123123"}'`
+    Just need the old checkpoint details: tree id, tree size, and root hash.
     Verifying consistency of a checkpoint till the latest checkpoint.
 
 

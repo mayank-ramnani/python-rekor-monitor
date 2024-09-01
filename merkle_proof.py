@@ -133,7 +133,7 @@ def root_from_inclusion_proof(hasher, index, size, leaf_hash, proof):
     return res
 
 
-def verify_inclusion(hasher, index, size, leaf_hash, proof, root):
+def verify_inclusion(hasher, index, size, leaf_hash, proof, root, debug=False):
     bytearray_proof = []
     for elem in proof:
         bytearray_proof.append(bytes.fromhex(elem))
@@ -142,6 +142,6 @@ def verify_inclusion(hasher, index, size, leaf_hash, proof, root):
     bytearray_leaf = bytes.fromhex(leaf_hash)
     calc_root = root_from_inclusion_proof(hasher, index, size, bytearray_leaf, bytearray_proof)
     verify_match(calc_root, bytearray_root)
-    print("Offline root hash calculation for inclusion verified.")
-    print("Calculated root hash", calc_root.hex())
-    print("Given root hash", bytearray_root.hex())
+    if debug:
+        print("Calculated root hash", calc_root.hex())
+        print("Given root hash", bytearray_root.hex())

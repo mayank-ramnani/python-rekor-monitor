@@ -116,7 +116,8 @@ def main():
     if args.checkpoint:
         # get and print latest checkpoint from server
         # if debug is enabled, store it in a file checkpoint.json
-        get_latest_checkpoint(debug)
+        checkpoint = get_latest_checkpoint(debug)
+        print(json.dumps(checkpoint, indent=4))
     if args.inclusion:
         inclusion(args.inclusion, args.artifact, debug)
     if args.consistency:
@@ -142,7 +143,8 @@ def inclusion(log_index, artifact_filepath, debug=False):
     if (log_index <= 0):
         print("log index is incorrect:,", log_index)
         return
-    print("checking inclusion for log index", log_index)
+    if debug:
+        print("checking inclusion for log index", log_index)
     url = "https://rekor.sigstore.dev/api/v1/log/entries?logIndex=" + str(log_index)
     response = requests.get(url)
     if response.status_code != 200:
@@ -151,7 +153,8 @@ def inclusion(log_index, artifact_filepath, debug=False):
 
     response_json = response.json()
     for key, value in response_json.items():
-        print("for uuid:", key)
+        if debug:
+            print("for uuid:", key)
         hashes = value["verification"]["inclusionProof"]["hashes"]
         body = json.loads(base64.b64decode(value["body"]))
         # print(json.dumps(body, indent=4))
@@ -173,14 +176,20 @@ def inclusion(log_index, artifact_filepath, debug=False):
                 f.write(sig)
             with open("debug-public_key.pem", "wb") as f:
                 f.write(public_key)
-
             print(public_key.decode("utf8"))
-        verify_binary_signature(sig, public_key, artifact_filepath)
+
+        try:
+            verify_binary_signature(sig, public_key, artifact_filepath)
+            print("Signature is valid.")
+        except Exception as e:
+            print(f"Artifact signature verification failed: {str(e)}")
 
     try:
         proof = get_verification_proof(log_index, debug)
         verify_inclusion(DefaultHasher, proof["index"], proof["tree_size"],
-                         proof["leaf_hash"], proof["hashes"], proof["root_hash"])
+                         proof["leaf_hash"], proof["hashes"], proof["root_hash"],
+                         debug)
+        print("Offline root hash calculation for inclusion verified.")
     except Exception as e:
         print(f"Inclusion verification failed: {str(e)}")
 
