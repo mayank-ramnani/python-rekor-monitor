@@ -33,7 +33,7 @@ def extract_public_key(cert):
 
     return pem_public_key
 
-def verify_binary_signature(signature, public_key, artifact_filename):
+def verify_artifact_signature(signature, public_key, artifact_filename):
     # load the public key
     # with open("cert_public.pem", "rb") as pub_key_file:
     #    public_key = load_pem_public_key(pub_key_file.read())
@@ -58,7 +58,3 @@ def verify_binary_signature(signature, public_key, artifact_filename):
         print("Signature is invalid:", e)
     except Exception as e:
         print("Signature is invalid:", e)
-
-# TODO: there's no error displayed when signature is invalid.
-# see if there's a way to get more details about what was wrong with signature
-# verification

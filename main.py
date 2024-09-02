@@ -4,7 +4,7 @@ import time
 import base64
 import json
 from merkle_proof import DefaultHasher, verify_consistency, verify_inclusion
-from my_crypto import extract_public_key, verify_binary_signature
+from util import extract_public_key, verify_artifact_signature
 
 def consistency(prev_checkpoint, debug=False):
     try:
@@ -179,7 +179,7 @@ def inclusion(log_index, artifact_filepath, debug=False):
             print(public_key.decode("utf8"))
 
         try:
-            verify_binary_signature(sig, public_key, artifact_filepath)
+            verify_artifact_signature(sig, public_key, artifact_filepath)
             print("Signature is valid.")
         except Exception as e:
             print(f"Artifact signature verification failed: {str(e)}")
