@@ -3,7 +3,7 @@ import requests
 import time
 import base64
 import json
-from merkle_proof import DefaultHasher, verify_consistency, verify_inclusion
+from merkle_proof import DefaultHasher, verify_consistency, verify_inclusion, compute_leaf_hash
 from util import extract_public_key, verify_artifact_signature
 
 def consistency(prev_checkpoint, debug=False):
@@ -52,7 +52,7 @@ def get_verification_proof(log_index, debug=False):
     for key, value in response_json.items():
         # key contains uuid
         # uuid is 16 byte string + entry hash
-        proof["leaf_hash"] = key[16:]
+        proof["leaf_hash"] = compute_leaf_hash(value["body"])
         proof["index"] = value["verification"]["inclusionProof"]["logIndex"]
         proof["root_hash"] = value["verification"]["inclusionProof"]["rootHash"]
         proof["tree_size"] = value["verification"]["inclusionProof"]["treeSize"]
