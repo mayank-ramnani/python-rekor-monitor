@@ -1,3 +1,4 @@
+# Python Rekor Monitor
 ## Usage
 - To fetch the latest checkpoint from the rekor server: `python main.py -c`
  or `python main.py --checkpoint`

@@ -1,3 +1,6 @@
 __pycache__
 debug-*
 archive/
+grading/
+.ruff_cache/
+.mypy_cache/
