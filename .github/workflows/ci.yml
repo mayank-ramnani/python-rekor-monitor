@@ -25,6 +25,7 @@ jobs:
       - name: Run mypy
         run: | 
           source $(poetry env info --path)/bin/activate
+          mypy --install-types
           mypy .
 
       - name: Validate build
