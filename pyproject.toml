@@ -34,6 +34,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 line-length = 118
+exclude = ["tests/*"]
 
 [tool.pylint]
 max-line-length = 118
