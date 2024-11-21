@@ -23,7 +23,9 @@ jobs:
             poetry install
 
       - name: Run mypy
-        run: mypy .
+        run: | 
+          source $(poetry env info --path)/bin/activate
+          mypy .
 
       - name: Validate build
         run: poetry build
