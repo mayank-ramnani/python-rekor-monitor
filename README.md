@@ -1,40 +1,49 @@
-# Python Rekor Monitor
-## Usage
-- To fetch the latest checkpoint from the rekor server: `python main.py -c`
- or `python main.py --checkpoint`
-- To verify that a particular log index is included in the transparency log as
- of now and verify the signature on that artifact stored in the transparency
- log: `python main.py --inclusion <logIndex> --artifact <artifactFilePath>`
-- To verify that an older checkpoint is consistent with the latest checkpoint
- on the rekor server: `python main.py --consistency --tree-id <treeID>
- --tree-size <treeSize> --root-hash <rootHash>`
- Tree ID, tree size and root hash from the older checkpoint.
+# Rekor Monitor
 
-## Flow
-1. Add an artifact to the Rekor transparency log using the cosign tool.
-    Verify that the entry was successfully included in the transparency log.
-2. Verify the consistency of the rekor transparency log, i.e that the new
-    entry that was append only to the log.
+An auditing system for Sigstore signatures.
 
-## Steps
-1. Create an artifact (binary) that will be signed with entry being stored in
-    the rekor log.
-2. Use the `cosign` tool to sign the artifact using your email id and store
-    the signature and certificate that was used to sign it. (bundle command)
-3. Get checkpoint of the rekor public instance transparency log.
-    "--checkpoint"
-4.  a. Verify that the artifact is in the transparency log by getting a merkle proof
-    and verifying it offline (use `merkle_proof` api)
-    "--inclusion <logIndex>"
-    b. Verify that the artifact signature is correct (use `crypto` api)
-5. At any point in time, can verify that the consistency of the checkpoint which had our entry added and the latest checkpoint by verifying the consistency proof.
-    Just need the old checkpoint details: tree id, tree size, and root hash.
-    Verifying consistency of a checkpoint till the latest checkpoint.
+## Project Description
 
+Rekor Monitor provides tools for verifying inclusion and consistency of log entries in the Sigstore Transparency Log (`rekor`). It helps ensure the integrity of signed artifacts using Cosign and Rekor.
 
-## Required data
-- For consistency verification, you need the old and new checkpoint details (treeSize, rootHash, treeID) and the hashes to generate a merkle proof to show that the old checkpoint exists in the new checkpoint.
-- For inclusion verification, you need the
+## Installation
 
-### Global Flags
-- `--debug` to dump intermediate files and print verbose output
+You can install Rekor Monitor directly from PyPI:
+
+```bash
+pip install rekor-monitor
+```
+
+## Using the Code
+
+1. **Fetch the Latest Checkpoint:**
+
+   Retrieve the latest checkpoint from the Rekor server with:
+
+   ```bash
+   rekor-monitor -c
+
+2. **Verifying Log Inclusion:**
+
+   To confirm that a specific log entry exists in the transparency log and verify the artifact's signature stored in Rekor:
+
+   ```bash
+   rekor-monitor --inclusion <logIndex> --artifact <artifactFilePath>
+   ```
+- Replace <logIndex> with the index of the log entry.
+
+- Replace <artifactFilePath> with the path to your artifact file.
+
+3. **Verifying Checkpoint Consistency:**
+
+   To ensure an older checkpoint is consistent with the current Rekor checkpoint:
+
+   ```bash
+   rekor-monitor --consistency --tree-id <treeID> --tree-size <treeSize> --root-hash <rootHash>
+   ```
+
+- Replace <treeID> with the ID of the Merkle tree.
+
+- Replace <treeSize> with the size of the previous tree.
+   
+- Replace <rootHash> with the root hash of the previous checkpoint.
