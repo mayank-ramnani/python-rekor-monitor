@@ -22,8 +22,11 @@ jobs:
             pip install poetry
             poetry install
 
+      - name: Run ruff
+        uses: astral-sh/ruff-action@v1.1.1
+
       - name: Run mypy
-        run: | 
+        run: |
           source $(poetry env info --path)/bin/activate
           mypy --install-types
           mypy .
