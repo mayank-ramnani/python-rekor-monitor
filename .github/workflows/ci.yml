@@ -29,7 +29,9 @@ jobs:
         run: poetry build
 
       - name: Run tests
-        run: pytest
+        run: |
+          source $(poetry env info --path)/bin/activate
+          pytest
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
