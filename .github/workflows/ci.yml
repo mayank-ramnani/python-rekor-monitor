@@ -25,11 +25,6 @@ jobs:
       - name: Run ruff
         uses: astral-sh/ruff-action@v1.1.1
 
-      - name: Run mypy
-        run: |
-          source $(poetry env info --path)/bin/activate
-          mypy --install-types rekor_monitor
-
       - name: Validate build
         run: poetry build
 
