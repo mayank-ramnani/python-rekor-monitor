@@ -28,7 +28,7 @@ jobs:
       - name: Run mypy
         run: |
           source $(poetry env info --path)/bin/activate
-          mypy --install-types rekor-monitor
+          mypy --install-types rekor_monitor
 
       - name: Validate build
         run: poetry build
