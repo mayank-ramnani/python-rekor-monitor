@@ -1,0 +1,60 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint-validate-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: verify tags
+        run: git tag
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+            pip install poetry
+            poetry install
+
+      - name: Run ruff
+        uses: astral-sh/ruff-action@v1.1.1
+        with:
+          args: "format --check" # formatter action
+
+      - name: Run ruff
+        uses: astral-sh/ruff-action@v1.1.1
+        with:
+          args: "check" # linter action
+
+      - name: Run bandit
+        run: |
+          source $(poetry env info --path)/bin/activate
+          bandit -r rekor_monitor
+
+      - name: Trufflehog Secret Scan
+        uses: trufflesecurity/trufflehog@v3.84.0
+
+      - name: Run tests
+        run: |
+          source $(poetry env info --path)/bin/activate
+          pytest --cov=rekor_monitor
+
+      - name: Validate build
+        run: poetry build
+
+
+      #- name: Create GitHub release
+        #  uses: softprops/action-gh-release@v2
+        #with:
+        #  files: dist/*

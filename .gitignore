@@ -1,6 +1,9 @@
-__pycache__
-debug-*
-archive/
-grading/
-.ruff_cache/
-.mypy_cache/
+__pycache__/
+.venv/
+code tests/
+artifact.bundle
+artifact.md
+.DS_Store
+git-filter-repo
+backup/
+.coverage
