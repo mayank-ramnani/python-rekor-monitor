@@ -24,6 +24,9 @@ bandit = "^1.7.10"
 pytest = "^8.3.3"
 pytest-cov = "^6.0.0"
 
+[tool.mypy]
+exclude = "^(backup/|tests/)"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
@@ -37,4 +40,4 @@ max-line-length = 118
 [tool.pytest.ini_options]
 addopts = "--maxfail=1 -v"  # Stop on the first failure and increase verbosity
 testpaths = ["tests"]       # Directory where tests are located
-
+pythonpath = "."
