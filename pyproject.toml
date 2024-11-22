@@ -26,7 +26,6 @@ pytest-cov = "^6.0.0"
 
 [tool.mypy]
 exclude = "^(backup/|tests/)"
-# install_types = true
 
 [build-system]
 requires = ["poetry-core"]
