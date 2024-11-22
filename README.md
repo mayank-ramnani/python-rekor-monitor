@@ -1,4 +1,6 @@
 # Python Rekor Monitor
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/mayank-ramnani/python-rekor-monitor/badge)](https://scorecard.dev/viewer/?uri=github.com/mayank-ramnani/python-rekor-monitor)
+
 ## Usage
 - To fetch the latest checkpoint from the rekor server: `python main.py -c`
  or `python main.py --checkpoint`
