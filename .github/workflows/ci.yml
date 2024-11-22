@@ -36,6 +36,7 @@ jobs:
       - name: Create a tag
         run: |
           # Extract version from pyproject.toml using python
+          source $(poetry env info --path)/bin/activate
           VERSION=$(python -c 'import toml; print(toml.load("pyproject.toml")["tool"]["poetry"]["version"])')
           echo "Creating tag v$VERSION"
 
