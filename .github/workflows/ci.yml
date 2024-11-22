@@ -35,9 +35,12 @@ jobs:
 
       - name: Create a tag
         run: |
-          VERSION=$(git describe --tags)
-          git tag $VERSION
-          git push origin $VERSION
+          # Extract version from pyproject.toml using python
+          VERSION=$(python -c 'import toml; print(toml.load("pyproject.toml")["tool"]["poetry"]["version"])')
+          echo "Creating tag v$VERSION"
+
+          git tag -a "v$VERSION" -m "Release version $VERSION"
+          git push origin "v$VERSION"
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2

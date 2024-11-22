@@ -15,6 +15,7 @@ cryptography = "^43.0.3"
 jsonschema = "^4.23.0"
 pre-commit = "^4.0.1"
 cyclonedx-bom = "^5.1.1"
+toml = "^0.10.2"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.13.0"
