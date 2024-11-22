@@ -27,15 +27,15 @@ jobs:
             pip install poetry
             poetry install
 
-      - name: Run ruff
+      - name: Run ruff formatter check
         uses: astral-sh/ruff-action@v1.1.1
         with:
-          args: "format --check" # formatter action
+          args: "format --check"
 
-      - name: Run ruff
+      - name: Run ruff linter check
         uses: astral-sh/ruff-action@v1.1.1
         with:
-          args: "check" # linter action
+          args: "check"
 
       - name: Run bandit
         run: |
@@ -52,7 +52,6 @@ jobs:
 
       - name: Validate build
         run: poetry build
-
 
       #- name: Create GitHub release
         #  uses: softprops/action-gh-release@v2
