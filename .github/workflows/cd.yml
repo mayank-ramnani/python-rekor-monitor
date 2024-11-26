@@ -6,8 +6,9 @@ on:
       - 'v*' # Trigger on version tags (e.g., v1.0.0)
 
 permissions:
-  id-token: write
   contents: write
+  actions: write
+  id-token: write
 
 jobs:
   build-and-release:
