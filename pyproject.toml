@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rekor-monitor"
-version = "4.0.4"
+version = "4.0.5"
 description = "An auditing system for Sigstore signatures"
 authors = ["Mayank <mayankr99@gmail.com>"]
 readme = "README.md"
