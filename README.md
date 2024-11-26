@@ -1,5 +1,5 @@
 # Python Rekor Monitor
-![Build Status](https://github.com/github/docs/actions/workflows/cd.yml/badge.svg)
+![Build Status](https://github.com/mayank-ramnani/python-rekor-monitor/actions/workflows/cd.yml/badge.svg)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/mayank-ramnani/python-rekor-monitor/badge)](https://scorecard.dev/viewer/?uri=github.com/mayank-ramnani/python-rekor-monitor)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9731/badge)](https://www.bestpractices.dev/projects/9731)
 
