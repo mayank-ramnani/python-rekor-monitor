@@ -38,3 +38,13 @@ jobs:
           files: dist/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate SBOM
+        run: |
+          source $(poetry env info --path)/bin/activate
+          cyclonedx-py poetry -o sbom.cyclonedx.json
+
+      - uses: actions/attest-sbom@v1
+        with:
+          subject-path: 'dist/*'
+          sbom-path: 'sbom.cyclonedx.json'
