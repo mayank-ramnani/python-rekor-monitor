@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write
-  actions: write
+  attestations: write
   id-token: write
 
 jobs:
